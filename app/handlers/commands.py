@@ -1,6 +1,8 @@
-from app.telegram.ext import CommandHandler
+from telegram.ext import CommandHandler  # Corrected import
 from app.config import Config
+from app.bot_data import bot_data
 
+# Rest of your commands.py code
 async def start(update, context):
     if update.effective_user.id != Config.AUTHORIZED_USER_ID:
         return

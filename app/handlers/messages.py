@@ -1,7 +1,8 @@
-from telegram.ext import MessageHandler, filters
+from telegram.ext import MessageHandler, filters  # Corrected import
 from app.config import Config
 from app.bot_data import bot_data
 
+# Rest of your messages.py code
 async def handle_message(update, context):
     if not bot_data.collecting or update.effective_user.id != Config.AUTHORIZED_USER_ID:
         return

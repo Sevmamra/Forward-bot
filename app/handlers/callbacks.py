@@ -38,9 +38,6 @@ async def select_groups(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
-# Add more callback handlers for group selection, topic selection, etc.
-
 def setup_callbacks(application):
     application.add_handler(CallbackQueryHandler(start_process, pattern="^start_process$"))
     application.add_handler(CallbackQueryHandler(select_groups, pattern="^select_groups$"))
-    # Add more callback handlers

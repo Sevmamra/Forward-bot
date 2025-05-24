@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: telegram-forward-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m app.main
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        value: your_bot_token_here
+      - key: AUTHORIZED_USER_ID
+        value: your_user_id
+      - key: GROUP_IDS
+        value: "-100123456789,-100987654321"
+      - key: PORT
+        value: 8000
+      - key: PYTHONUNBUFFERED
+        value: 1

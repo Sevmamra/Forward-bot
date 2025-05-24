@@ -1,6 +1,6 @@
-from telegram.ext import Application
-from app.handlers import setup_handlers
+from telegram.ext import Application  # Make sure this is correct
 from app.config import Config
+from app.handlers import setup_handlers
 
 def main():
     application = Application.builder().token(Config.TOKEN).build()

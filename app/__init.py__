@@ -1,6 +1,1 @@
-# Import key components to make them available when importing the package
-from .main import main
-from .config import Config
-from .bot_data import BotData
 
-__all__ = ['main', 'Config', 'BotData']

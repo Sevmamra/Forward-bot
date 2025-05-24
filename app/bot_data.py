@@ -17,18 +17,24 @@ class BotData:
         self.selected_groups: Set[int] = set()
         self.selected_topics: Dict[int, Set[int]] = {}
         self.messages_to_forward: List[Dict] = []
-        self.groups_info: Dict[int, Dict] = {}  # Stores group info
+        self.groups_info: Dict[int, Dict] = {}
 
     async def fetch_groups(self, context):
         """Fetch all groups where bot is admin"""
         self.groups_info = {}
+        if not Config.GROUP_IDS:
+            return
+            
         for group_id in Config.GROUP_IDS:
             try:
                 chat = await context.bot.get_chat(group_id)
-                self.groups_info[group_id] = {
-                    'name': chat.title,
-                    'topics': {}  # Will be populated when needed
-                }
+                # Check if bot is admin
+                member = await context.bot.get_chat_member(group_id, context.bot.id)
+                if member.status in ['administrator', 'creator']:
+                    self.groups_info[group_id] = {
+                        'name': chat.title,
+                        'topics': {}
+                    }
             except Exception as e:
                 print(f"Error fetching group {group_id}: {e}")
 

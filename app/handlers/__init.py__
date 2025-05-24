@@ -1,0 +1,11 @@
+from .commands import setup_commands
+from .messages import setup_messages
+from .callbacks import setup_callbacks
+
+__all__ = ['setup_handlers']
+
+def setup_handlers(application):
+    """Combine all handler setups"""
+    setup_commands(application)
+    setup_messages(application)
+    setup_callbacks(application)

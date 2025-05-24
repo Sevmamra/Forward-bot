@@ -1,5 +1,5 @@
-from telegram.ext import CommandHandler
-from config import Config
+from app.telegram.ext import CommandHandler
+from app.config import Config
 
 async def start(update, context):
     if update.effective_user.id != Config.AUTHORIZED_USER_ID:

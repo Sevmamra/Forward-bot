@@ -1,4 +1,5 @@
-from telegram.ext import MessageHandler, filters
+from telegram import Update
+from telegram.ext import MessageHandler, filters, ContextTypes
 from app.config import Config
 from app.bot_data import bot_data
 

@@ -18,3 +18,8 @@ A simple bot to forward messages to multiple groups/topics.
 ```bash
 docker build -t telegram-bot .
 docker run -e TELEGRAM_BOT_TOKEN="xxx" -e AUTHORIZED_USER_ID=123 telegram-bot
+## Commands
+- /start - Show help
+- /forward - Start forwarding process
+- /done - Finish collecting messages
+```

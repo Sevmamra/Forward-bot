@@ -1,4 +1,4 @@
-from telegram.ext import Application  # Make sure this is correct
+from telegram.ext import Application
 from app.config import Config
 from app.handlers import setup_handlers
 

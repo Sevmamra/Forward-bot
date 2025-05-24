@@ -1,8 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackQueryHandler, ContextTypes
-from config import Config
+from app.config import Config
 from app.bot_data import bot_data
-
 async def start_process(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Start the forwarding process."""
     query = update.callback_query

@@ -1,5 +1,5 @@
 from telegram.ext import MessageHandler, filters
-from config import Config
+from app.config import Config
 from app.bot_data import bot_data
 
 async def handle_message(update, context):

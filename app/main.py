@@ -1,8 +1,8 @@
 import logging
-from telegram.ext import Application
+from telegram import Update
+from telegram.ext import Application, ContextTypes
 from app.config import Config
 from app.handlers import setup_handlers
-import os
 
 # Configure logging
 logging.basicConfig(
@@ -11,13 +11,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def main():
+async def main():
     try:
-        # Create application with unique persistence key
-        application = Application.builder() \
-            .token(Config.TOKEN) \
-            .concurrent_updates(True) \  # Allow concurrent updates
+        # Create application with proper configuration
+        application = (
+            Application.builder()
+            .token(Config.TOKEN)
+            .concurrent_updates(True)  # Allow concurrent updates
             .build()
+        )
         
         setup_handlers(application)
         
@@ -27,7 +29,7 @@ def main():
         await application.bot.delete_webhook(drop_pending_updates=True)
         
         # Start polling with clean state
-        application.run_polling(
+        await application.run_polling(
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True
         )
@@ -37,4 +39,5 @@ def main():
         raise
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+    asyncio.run(main())

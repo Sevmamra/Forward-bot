@@ -35,17 +35,29 @@ async def select_groups(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         ])
     
-    # 🔥 Fixed: Added missing closing brackets below
     keyboard.append([
         InlineKeyboardButton("Select All", callback_data="select_all_groups"),
         InlineKeyboardButton("Send", callback_data="proceed_to_topics")
     ])
     
-    await query.edit_message_text(  # ✅ Now properly closed
+    await query.edit_message_text(
         "👥 Select Groups to Forward:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
+async def toggle_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    group_id = int(query.data.split(":")[1])
+    
+    if group_id in bot_data.selected_groups:
+        bot_data.selected_groups.remove(group_id)
+    else:
+        bot_data.selected_groups.add(group_id)
+    
+    await select_groups(update, context)  # Refresh group list
+
 def setup_callbacks(application):
     application.add_handler(CallbackQueryHandler(start_process, pattern="^start_process$"))
     application.add_handler(CallbackQueryHandler(select_groups, pattern="^select_groups$"))
+    application.add_handler(CallbackQueryHandler(toggle_group, pattern="^toggle_group:"))

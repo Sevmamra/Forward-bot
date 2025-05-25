@@ -13,22 +13,17 @@ logger = logging.getLogger(__name__)
 
 async def main():
     try:
-        # Create application with proper configuration
         application = (
             Application.builder()
             .token(Config.TOKEN)
-            .concurrent_updates(True)  # Allow concurrent updates
+            .concurrent_updates(True)
             .build()
         )
         
         setup_handlers(application)
-        
         logger.info("Starting bot...")
         
-        # Clear any pending updates
         await application.bot.delete_webhook(drop_pending_updates=True)
-        
-        # Start polling with clean state
         await application.run_polling(
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True
@@ -40,4 +35,7 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(main())
+    # 🔥 FIX: Use this instead of asyncio.run() for Render
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(main())

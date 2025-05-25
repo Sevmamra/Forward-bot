@@ -25,17 +25,17 @@ async def done(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     report = (
         "📊 Received Items Summary:\n\n"
-        f"🎥 Videos - {bot_data.received_items['videos']}\n"
-        f"📁 Files - {bot_data.received_items['files']}\n"
-        f"📷 Photos - {bot_data.received_items['photos']}\n"
-        f"📝 Text Messages - {bot_data.received_items['texts']}\n"
-        f"📦 Others - {bot_data.received_items['others']}\n\n"
-        f"🔢 Total - {sum(bot_data.received_items.values())}"
+        f"🎬 Videos: {bot_data.received_items['videos']}\n"
+        f"📁 Files: {bot_data.received_items['files']}\n"
+        f"🖼️ Photos: {bot_data.received_items['photos']}\n"
+        f"📝 Texts: {bot_data.received_items['texts']}\n"
+        f"📦 Others: {bot_data.received_items['others']}\n\n"
+        f"🔢 Total: {sum(bot_data.received_items.values())}"
     )
     
-    keyboard = [[InlineKeyboardButton("Select Groups", callback_data="select_groups")]]
+    # Ensure groups are loaded
+    if not bot_data.groups_info:
+        await bot_data.fetch_groups(context)
+    
+    keyboard = [[InlineKeyboardButton("SELECT GROUPS", callback_data="select_groups")]]
     await update.message.reply_text(report, reply_markup=InlineKeyboardMarkup(keyboard))
-
-def setup_commands(application):
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("done", done))

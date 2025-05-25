@@ -18,28 +18,21 @@ class BotData:
             'others': 0
         }
         self.collecting = False
-        self.selected_groups: Set[int] = set()
-        self.selected_topics: Dict[int, Set[int]] = {}
+        self.selected_groups: Dict[int, Set[int]] = {}  # {group_id: set(topic_ids)}
         self.messages_to_forward: List[Dict] = []
         self.groups_info: Dict[int, Dict] = {}
 
-    async def fetch_groups(self, context):
-        """Fetch groups where bot is admin"""
-        self.groups_info = {}
-        if not Config.GROUP_IDS:
-            return
-            
-        for group_id in Config.GROUP_IDS:
-            try:
-                chat = await context.bot.get_chat(group_id)
-                member = await context.bot.get_chat_member(group_id, context.bot.id)
-                if member.status in ['administrator', 'creator']:
-                    self.groups_info[group_id] = {
-                        'name': chat.title,
-                        'topics': {}
-                    }
-            except Exception as e:
-                logger.error(f"Error fetching group {group_id}: {e}")
+    async def fetch_topics(self, context, group_id):
+        """Fetch topics for a specific group"""
+        try:
+            chat = await context.bot.get_chat(group_id)
+            if chat.is_forum:
+                self.groups_info[group_id]['topics'] = {
+                    # Default general topic
+                    1: "General"  
+                }
+                # Add your logic to fetch existing topics here
+        except Exception as e:
+            logger.error(f"Error fetching topics for {group_id}: {e}")
 
-# 🔥 Critical Fix: This must be at the BOTTOM of the file
 bot_data = BotData()

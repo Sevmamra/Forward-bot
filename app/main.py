@@ -26,7 +26,8 @@ async def main():
         await application.bot.delete_webhook(drop_pending_updates=True)
         await application.run_polling(
             allowed_updates=Update.ALL_TYPES,
-            drop_pending_updates=True
+            drop_pending_updates=True,
+            close_loop=False  # 🔥 Critical fix for Render
         )
         
     except Exception as e:
@@ -34,8 +35,5 @@ async def main():
         raise
 
 if __name__ == "__main__":
-    import asyncio
-    # 🔥 FIX: Use this instead of asyncio.run() for Render
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(main())
+    from asyncio import run
+    run(main())  # ✅ Simplified approach that works on Render

@@ -1,3 +1,10 @@
+from typing import Dict, List, Set, Optional
+from telegram import Chat
+from app.config import Config
+import logging
+
+logger = logging.getLogger(__name__)
+
 class BotData:
     def __init__(self):
         self.reset()
@@ -11,12 +18,17 @@ class BotData:
             'others': 0
         }
         self.collecting = False
-        self.selected_groups = set()  # Initialize as empty set
-        self.groups_info = {}  # Stores group info
-        
+        self.selected_groups: Set[int] = set()
+        self.selected_topics: Dict[int, Set[int]] = {}
+        self.messages_to_forward: List[Dict] = []
+        self.groups_info: Dict[int, Dict] = {}
+
     async def fetch_groups(self, context):
         """Fetch groups where bot is admin"""
         self.groups_info = {}
+        if not Config.GROUP_IDS:
+            return
+            
         for group_id in Config.GROUP_IDS:
             try:
                 chat = await context.bot.get_chat(group_id)
@@ -28,3 +40,6 @@ class BotData:
                     }
             except Exception as e:
                 logger.error(f"Error fetching group {group_id}: {e}")
+
+# 🔥 Critical Fix: This must be at the BOTTOM of the file
+bot_data = BotData()

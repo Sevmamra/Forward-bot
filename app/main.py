@@ -11,29 +11,28 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-async def main():
+def run_bot():
+    """Run the bot synchronously for Render compatibility"""
+    application = (
+        Application.builder()
+        .token(Config.TOKEN)
+        .concurrent_updates(True)
+        .build()
+    )
+    
+    setup_handlers(application)
+    logger.info("Starting bot...")
+    
+    # Run with try-except to handle errors
     try:
-        application = (
-            Application.builder()
-            .token(Config.TOKEN)
-            .concurrent_updates(True)
-            .build()
-        )
-        
-        setup_handlers(application)
-        logger.info("Starting bot...")
-        
-        await application.bot.delete_webhook(drop_pending_updates=True)
-        await application.run_polling(
+        application.run_polling(
             allowed_updates=Update.ALL_TYPES,
             drop_pending_updates=True,
-            close_loop=False  # 🔥 Critical fix for Render
+            close_loop=False  # Critical for Render
         )
-        
     except Exception as e:
-        logger.error(f"Failed to start bot: {e}")
+        logger.error(f"Bot crashed: {e}")
         raise
 
 if __name__ == "__main__":
-    from asyncio import run
-    run(main())  # ✅ Simplified approach that works on Render
+    run_bot()  # Simple synchronous entry point

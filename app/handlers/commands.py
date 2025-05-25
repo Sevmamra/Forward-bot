@@ -1,37 +1,46 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CommandHandler, ContextTypes
-from app.config import Config
 from app.bot_data import bot_data
+from app.config import Config
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != Config.AUTHORIZED_USER_ID:
+        await update.message.reply_text("❌ You are not authorized to use this bot.")
         return
 
-    welcome_msg = (
-        f"ʜᴇʟʟᴏ, {update.effective_user.full_name} ꜱɪʀ!\n\n"
-        "ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴏᴜʀ ꜰᴏʀᴡᴀʀᴅɪɴɢ ʙᴏᴛ ꜱᴇʀᴠɪᴄᴇ.\n\n"
-        "ꜱɪᴍᴘʟʏ ꜱᴇɴᴅ ᴀɴʏ ᴍᴇꜱꜱᴀɢᴇ, ᴘʜᴏᴛᴏ, ᴠɪᴅᴇᴏ, ᴅᴏᴄᴜᴍᴇɴᴛ, ᴏʀ ꜰɪʟᴇ ʜᴇʀᴇ — ᴀɴᴅ ᴏᴜʀ ʙᴏᴛ ᴡɪʟʟ ɪɴꜱᴛᴀɴᴛʟʏ ꜰᴏʀᴡᴀʀᴅ ɪᴛ ᴛᴏ ʏᴏᴜʀ ᴅᴇꜱɪɢɴᴀᴛᴇᴅ ɢʀᴏᴜᴘ, ᴇɴꜱᴜʀɪɴɢ ꜱᴇᴀᴍʟᴇꜱꜱ ᴀɴᴅ ᴇꜰꜰɪᴄɪᴇɴᴛ ᴅᴇʟɪᴠᴇʀʏ ᴡɪᴛʜᴏᴜᴛ ᴀɴʏ ᴅᴇʟᴀʏ.\n\n"
-        "ᴍᴀᴅᴇ ᴡɪᴛʜ ❤️ ʙʏ 𝐂𝐀 𝐈𝐧𝐭𝐞𝐫 𝐗"
+    keyboard = [
+        [InlineKeyboardButton("🚀 Start Process", callback_data="start_process")]
+    ]
+
+    await update.message.reply_text(
+        "👋 Welcome! Use the button below to start forwarding process.",
+        reply_markup=InlineKeyboardMarkup(keyboard)
     )
-    keyboard = [[InlineKeyboardButton("Start Process", callback_data="start_process")]]
-    await update.message.reply_text(welcome_msg, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def done(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != Config.AUTHORIZED_USER_ID:
+    if not bot_data.collecting:
+        await update.message.reply_text("⚠️ No active collection in progress.")
         return
 
-    bot_data.collecting = False
-    report = (
-        "📊 Received Items Summary:\n\n"
-        f"🎬 Videos: {bot_data.received_items['videos']}\n"
-        f"📁 Files: {bot_data.received_items['files']}\n"
+    summary = (
+        "✅ Collection Summary:\n"
+        f"📹 Videos: {bot_data.received_items['videos']}\n"
+        f"📄 Files: {bot_data.received_items['files']}\n"
         f"🖼️ Photos: {bot_data.received_items['photos']}\n"
         f"📝 Texts: {bot_data.received_items['texts']}\n"
         f"📦 Others: {bot_data.received_items['others']}\n\n"
-        f"🔢 Total: {sum(bot_data.received_items.values())}"
+        "Select what to do next:"
     )
-    keyboard = [[InlineKeyboardButton("SELECT GROUPS", callback_data="select_groups")]]
-    await update.message.reply_text(report, reply_markup=InlineKeyboardMarkup(keyboard))
+
+    keyboard = [
+        [InlineKeyboardButton("📤 SELECT GROUPS", callback_data="select_groups")],
+        [InlineKeyboardButton("❌ Cancel", callback_data="start_process")]
+    ]
+
+    await update.message.reply_text(
+        summary,
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
 
 def setup_commands(application):
     application.add_handler(CommandHandler("start", start))

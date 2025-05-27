@@ -15,6 +15,10 @@ logger = logging.getLogger(__name__)
 
 WAITING_FOR_TOPIC_NAME = 1
 
+async def cancel_topic_creation(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Topic creation cancelled.")
+    return ConversationHandler.END
+
 async def start_process(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -153,6 +157,10 @@ async def proceed_to_forward(update: Update, context: ContextTypes.DEFAULT_TYPE)
                         await context.bot.send_video(video=msg_data['content'], **kwargs)
                     elif msg_data['type'] == 'photo':
                         await context.bot.send_photo(photo=msg_data['content'], **kwargs)
+                    elif msg_data['type'] == 'document':
+                        await context.bot.send_document(document=msg_data['content'], **kwargs)
+                    elif msg_data['type'] == 'text':
+                        await context.bot.send_message(text=msg_data['content'], **kwargs)
                     total_sent += 1
                 except Exception as e:
                     logger.error(f"Forward error: {e}")

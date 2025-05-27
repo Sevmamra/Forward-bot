@@ -33,16 +33,16 @@ class BotData:
 
     async def fetch_topics(self, context, group_id):
         try:
-            topics = await context.bot.get_forum_topic_list(group_id)
+            # Updated method for PTB v20.5
+            topics = await context.bot.get_forum_topics(group_id)
             self.groups_info[group_id]['topics'] = {
                 topic.message_thread_id: topic.name
-                for topic in topics
+                for topic in topics.topics
             }
-
-            # Agar group ke topics abhi tak selected_groups me nahi hai to default me sab add kar do
+            
             if group_id not in self.selected_groups:
                 self.selected_groups[group_id] = set(self.groups_info[group_id]['topics'].keys())
-
+                
         except Exception as e:
             logger.error(f"Failed to fetch topics for group {group_id}: {e}")
 

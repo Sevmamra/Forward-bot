@@ -138,7 +138,8 @@ async def handle_new_topic_name(update: Update, context: ContextTypes.DEFAULT_TY
     try:
         new_topic = await context.bot.create_forum_topic(
             chat_id=group_id,
-            name=topic_name
+            name=topic_name,
+            icon_color=0x6FB9F0
         )
         bot_data.groups_info[group_id]['topics'][new_topic.message_thread_id] = topic_name
         bot_data.selected_groups[group_id].add(new_topic.message_thread_id)
@@ -157,7 +158,6 @@ async def handle_new_topic_name(update: Update, context: ContextTypes.DEFAULT_TY
                 [InlineKeyboardButton("Back", callback_data="select_topics")]
             ])
         )
-
     return ConversationHandler.END
 
 async def cancel_topic_creation(update: Update, context: ContextTypes.DEFAULT_TYPE):

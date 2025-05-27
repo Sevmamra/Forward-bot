@@ -149,7 +149,10 @@ async def proceed_to_forward(update: Update, context: ContextTypes.DEFAULT_TYPE)
                         'chat_id': group_id,
                         'message_thread_id': topic_id
                     }
-                    # ... (पहले वाला फॉरवर्डिंग लॉजिक)
+                    if msg_data['type'] == 'video':
+                        await context.bot.send_video(video=msg_data['content'], **kwargs)
+                    elif msg_data['type'] == 'photo':
+                        await context.bot.send_photo(photo=msg_data['content'], **kwargs)
                     total_sent += 1
                 except Exception as e:
                     logger.error(f"Forward error: {e}")
@@ -158,4 +161,21 @@ async def proceed_to_forward(update: Update, context: ContextTypes.DEFAULT_TYPE)
     bot_data.reset()
 
 def setup_callbacks(application):
-    # ... (पहले वाला सेटअप)
+    application.add_handler(CallbackQueryHandler(start_process, pattern="^start_process$"))
+    application.add_handler(CallbackQueryHandler(select_groups, pattern="^select_groups$"))
+    application.add_handler(CallbackQueryHandler(toggle_group, pattern="^toggle_group:"))
+    application.add_handler(CallbackQueryHandler(select_all_groups, pattern="^select_all_groups$"))
+    application.add_handler(CallbackQueryHandler(select_topics, pattern="^select_topics$"))
+    application.add_handler(CallbackQueryHandler(toggle_topic, pattern="^toggle_topic:"))
+    application.add_handler(CallbackQueryHandler(proceed_to_forward, pattern="^proceed_to_forward$"))
+
+    application.add_handler(ConversationHandler(
+        entry_points=[CallbackQueryHandler(create_new_topic, pattern="^create_new_topic$")],
+        states={
+            WAITING_FOR_TOPIC_NAME: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_new_topic_name),
+                MessageHandler(filters.COMMAND | filters.Regex("^❌ Cancel$"), cancel_topic_creation)
+            ]
+        },
+        fallbacks=[]
+    ))

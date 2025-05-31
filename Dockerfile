@@ -2,13 +2,16 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# पहले Python-Telegram-Bot के डिपेंडेंसीज इंस्टॉल करो
+# Install dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir python-telegram-bot==20.5 python-dotenv==1.0.0 httpx==0.24.1
+RUN pip install --no-cache-dir -r requirements.txt
 
-# फिर FastAPI/UVicorn अलग से इंस्टॉल करो
-RUN pip install --no-cache-dir fastapi==0.109.2 uvicorn==0.27.1
-
+# Copy all files
 COPY . .
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD python -c "import os; assert os.getenv('TELEGRAM_BOT_TOKEN'), 'Token not set!'" || exit 1
+
+# Run bot
 CMD ["python", "-m", "app.main"]

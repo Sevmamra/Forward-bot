@@ -1,5 +1,2 @@
 python-telegram-bot==20.5
 python-dotenv==1.0.0
-fastapi==0.109.2
-uvicorn==0.27.1
-httpx==0.24.1  # python-telegram-bot के साथ कंपैटिबल वर्जन

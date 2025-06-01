@@ -6,7 +6,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not bot_data.collecting:
         return
 
-    # Save message for forwarding
     bot_data.messages_to_forward.append(update.message)
 
 def setup_messages(application):

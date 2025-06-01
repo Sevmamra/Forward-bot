@@ -1,16 +1,8 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CommandHandler, ContextTypes
-from app.config import Config
 from app.bot_data import bot_data
-import logging
-
-logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != Config.AUTHORIZED_USER_ID:
-        await update.message.reply_text("❌ Unauthorized!")
-        return
-
     keyboard = [[
         InlineKeyboardButton("🚀 Start Forwarding", callback_data="start_process")
     ]]
@@ -21,7 +13,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def done(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not bot_data.collecting:
-        await update.message.reply_text("⚠️ No active session!")
+        await update.message.reply_text("⚠️ No active collection!")
         return
 
     keyboard = [[
@@ -29,7 +21,7 @@ async def done(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]]
     await update.message.reply_text(
         f"📊 Collected: {len(bot_data.messages_to_forward)} items\n"
-        "Click below to create new topic and forward:",
+        "Click below to create new topic:",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
